@@ -1,13 +1,12 @@
+import preprocess as pp
 
-
-
-def input(input):
-    res = []
-    with open(input, 'r') as inputFile:
-        res = [line.rstrip().split('\t') for line in inputFile]
-    return res
+def modelInit(model):
+    layerSize = [int(n) for n in model.split('-')]
+    print(layerSize)
 
 if __name__ == '__main__':
-    data = input('Flood_dataset.txt')
-    print(data)
-    print('Hola')
+    data = pp.input('Flood_dataset.txt')
+    trainSet, testSet = pp.kFolds(data,10)
+    modelInit('8-2-6-1')
+    # print(len(trainSet))
+    # print('Hola')

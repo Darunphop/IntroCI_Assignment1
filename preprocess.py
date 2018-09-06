@@ -16,7 +16,6 @@ def kFolds(data, k=1):
     np.random.shuffle(data)
 
     for i in range(k):
-        # tmp.append(data[i*k:(i+1)*k])
         trainSet[i].extend(data[0:(i)*binSize])
         trainSet[i].extend(data[(i+1)*binSize:dataSize-remainSize])
         testSet[i].extend(data[i*binSize:(i+1)*binSize])
