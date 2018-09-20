@@ -16,15 +16,40 @@ def modelInit(model):
 
     return weight, bias, activationLayer
 
-def feedForward(input, weigth, bias):
+def feedForward(input, weigth, bias, activation):
     res = []
+    tmp = []
 
+    print(activation)
+    print(bias)
+    for i in range(len(activation)-1):
+        tmp = np.dot(len(tmp)==0 and input or tmp, np.transpose(weigth[i]))
+        # print("BEFORE")
+        # print(tmp)
+        for j in range(tmp.shape[0]):
+            for k in range(tmp.shape[1]):
+                tmp[j][k] += bias[i][k]
+        for j in range(tmp.shape[0]):
+            print(tmp[j], j)
+            # tmp[j] = act.activate(np.copy(tmp[j]), activation[i+1])
+            print(tmp[j], j)
+            # print(tmp[0],'lo 0')
+            pass
+        # print(act.activate(tmp[0], activation[i+1]))
+        # print(tmp.shape)
+        # print("AFTER")
+        # print(tmp)
+    # print(input[0])
+    
     return res
 
 if __name__ == '__main__':
     data = pp.input('Flood_dataset.txt')
     trainSet, testSet = pp.kFolds(data,10)
-    _,_,a = modelInit('8x-6s-2s-1s')
-    # print(len(trainSet))
+    w,b,a = modelInit('9x-3s-2s-5s')
+    inpu = trainSet[0][:2]
+    o = feedForward(inpu, w, b, a)
+    # print(len(trainSet[0]))
+    # print(trainSet[0][:1])
     # print(act.sigmoid([1,2,3]))
     # print(a)
