@@ -3,7 +3,7 @@ import numpy as np
 def input(input):
     res = []
     with open(input, 'r') as inputFile:
-        res = [line.rstrip().split('\t') for line in inputFile]
+        res = [list(map(int, line.rstrip().split('\t'))) for line in inputFile]
     return res
 
 def kFolds(data, k=1):
