@@ -5,6 +5,12 @@ def sigmoid(x):
 
 sigmoid = np.vectorize(sigmoid)
 
+def activate(x, func):
+    if func == 's':
+        return sigmoid(x)
+    else:
+        return x
+
 if __name__ == '__main__':
     sm = np.vectorize(sigmoid)
     print(sm([1,2,3]))
