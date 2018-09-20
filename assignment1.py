@@ -11,8 +11,13 @@ def modelInit(model):
     bias = []
     for i in range(nHidden):
         bias.append(np.random.rand(layerSize[i+1]))
-    # ran = np.random.rand(3,2)
-    # print(bias)
+
+    return weight, bias
+
+def feedForward(input, weigth, bias):
+    res = []
+
+    return res
 
 if __name__ == '__main__':
     data = pp.input('Flood_dataset.txt')
