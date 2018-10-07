@@ -6,6 +6,10 @@ def input(input):
         res = [list(map(int, line.rstrip().split('\t'))) for line in inputFile]
     return res
 
+def normalize(x):
+    #max 628 min 95 || 0 - 700
+    return (x - 0) / (700 - 0)
+
 def kFolds(data, k=1):
     trainSet = [[] for i in range(k)]
     testSet = [[] for i in range(k)]
@@ -23,3 +27,9 @@ def kFolds(data, k=1):
             trainSet[i].extend(data[-(dataSize % k):])
     
     return trainSet, testSet
+
+if __name__ == 'preprocess':
+    normalRange = np.vectorize(normalize)
+
+if __name__ == '__main__':
+    data = [[1,2,3,4],[4,5,6,7]]
