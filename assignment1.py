@@ -1,53 +1,22 @@
 import preprocess as pp
-import activation as act
+import MLP as mlp
 import numpy as np
-
-def modelInit(model):
-    layerSize = [int(n[:-1]) for n in model.split('-')]
-    activationLayer = [n[-1:] for n in model.split('-')]
-    nHidden = len(layerSize) - 1
-
-    weight = []
-    for i in range(nHidden):
-        weight.append(np.random.rand(layerSize[i+1], layerSize[i]))
-    bias = []
-    for i in range(nHidden):
-        bias.append(np.random.rand(layerSize[i+1]))
-
-    return weight, bias, activationLayer
-
-def feedForward(input, weigth, bias, activation):
-    res = []
-    tmp = []
-
-    print(activation)
-    print(bias)
-    # print(weigth)
-    for i in range(len(activation)-1):
-        # print('tmpIN',tmp)
-        tmp = np.dot(len(tmp)==0 and input or tmp, np.transpose(weigth[i]))
-        # print('tmpOUT',tmp)
-        # print("BEFORE")
-        # print(tmp)
-        for j in range(tmp.shape[0]):
-            for k in range(tmp.shape[1]):
-                tmp[j][k] += bias[i][k]
-        for j in range(tmp.shape[0]):
-            tmp[j] = act.activate(np.copy(tmp[j]), activation[i+1])
-        res.append(tmp)
-    
-    return res
 
 if __name__ == '__main__':
     data = pp.input('Flood_dataset.txt')
     trainSet, testSet = pp.kFolds(data,10)
-    w,b,a = modelInit('9x-3s-2s-5s')
-    inpu = trainSet[0][:2]
+    w,b,a = mlp.modelInit('8x-3s-2s-5s-1s')
+    chunk = trainSet[0][:2]
+    inpu = np.delete(chunk, -1, 1)
     inpu = pp.normalRange(inpu).tolist()
-    # print(inpu.__class__)
-    # print(pp.normalRange(inpu).__class__)
-    o = feedForward(inpu, w, b, a)
-    print(o)
+    d = np.delete(chunk, range(len(chunk[0])-1), 1)
+    d = pp.normalRange(d).tolist()
+
+    o = mlp.feedForward(inpu, w, b, a)
+    # print(o)
+    # for i in o:
+    #     print(i)
+    mlp.backpropagate(o,w,b,a,d,0.001,0)
     # print(len(trainSet[0]))
     # print(trainSet[0][:1])
     # print(act.sigmoid([1,2,3]))
