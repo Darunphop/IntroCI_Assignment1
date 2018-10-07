@@ -20,7 +20,7 @@ def feedForward(input, weigth, bias, activation):
     tmp = []
 
     print(activation)
-    print(bias)
+    # print(bias)
     # print(weigth)
     for i in range(len(activation)-1):
         tmp = np.dot(len(tmp)==0 and input or tmp, np.transpose(weigth[i]))
@@ -31,6 +31,23 @@ def feedForward(input, weigth, bias, activation):
             tmp[j] = act.activate(np.copy(tmp[j]), activation[i+1])
         res.append(tmp)
     
+    return res
+
+def backpropagate(y, weight, bias, activation, d, learnRate, momentum):
+    res = []
+    err = [0.0 for i in range(len(d[0]))]
+    print(err)
+    for i in range(len(d)):
+        if len(d[i]) > 1:
+            for j in range(len(d[i])):
+                y[-1:][i]
+        else:
+            err += (d[i] - y[-1][i])**2
+    print(err)
+    print(activation)
+    for i in range(len(activation)):
+        # layer =
+        pass
     return res
 
 if __name__ == '__main__':
