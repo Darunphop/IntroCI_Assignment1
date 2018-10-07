@@ -34,8 +34,7 @@ def feedForward(input, weigth, bias, activation):
                 tmp[j][k] += bias[i][k]
         for j in range(tmp.shape[0]):
             tmp[j] = act.activate(np.copy(tmp[j]), activation[i+1])
-            pass
-    # print(input[0])
+        res.append(tmp)
     
     return res
 
@@ -45,6 +44,10 @@ if __name__ == '__main__':
     w,b,a = modelInit('9x-3s-2s-5s')
     inpu = trainSet[0][:2]
     o = feedForward(inpu, w, b, a)
+    print(len(o))
+    for i in o:
+        print(i)
+        print('')
     # print(len(trainSet[0]))
     # print(trainSet[0][:1])
     # print(act.sigmoid([1,2,3]))
