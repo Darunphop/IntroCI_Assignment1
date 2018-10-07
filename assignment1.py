@@ -22,23 +22,19 @@ def feedForward(input, weigth, bias, activation):
 
     print(activation)
     print(bias)
+    # print(weigth)
     for i in range(len(activation)-1):
+        # print('tmpIN',tmp)
         tmp = np.dot(len(tmp)==0 and input or tmp, np.transpose(weigth[i]))
+        # print('tmpOUT',tmp)
         # print("BEFORE")
         # print(tmp)
         for j in range(tmp.shape[0]):
             for k in range(tmp.shape[1]):
                 tmp[j][k] += bias[i][k]
         for j in range(tmp.shape[0]):
-            print(tmp[j], j)
-            # tmp[j] = act.activate(np.copy(tmp[j]), activation[i+1])
-            print(tmp[j], j)
-            # print(tmp[0],'lo 0')
+            tmp[j] = act.activate(np.copy(tmp[j]), activation[i+1])
             pass
-        # print(act.activate(tmp[0], activation[i+1]))
-        # print(tmp.shape)
-        # print("AFTER")
-        # print(tmp)
     # print(input[0])
     
     return res
