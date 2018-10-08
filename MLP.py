@@ -41,11 +41,21 @@ def backpropagate(y, weight, bias, activation, d, learnRate, momentum):
     err = np.sum(y[-1] - np.asarray(d), axis=0)
     print(err,'errr')
 
-    print(activation)
-    for i in reversed(range(len(activation))):
-        # layer =
-        print(i)
+    # print(activation)
+    print(y)
+    localGradient = [[] for i in range(len(y))]
+    print(localGradient)
+    for i in reversed(range(1,len(activation))):
+        if i == len(activation)-1:
+            for j in range(len(y[i-1])):
+                for k in range(len(y[i-1][j])):
+                    o = y[i-1][j][k]
+                    error = d[j][k] - o
+                    inv = act.activate(o, activation[i], True)
+                    localGradient[i-1].append(error*inv)
+        # print(i)
         pass
+    print(localGradient)
     return res
 
 if __name__ == '__main__':
