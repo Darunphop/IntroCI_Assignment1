@@ -44,42 +44,55 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
 
     
     # for i in range(len(weight)):
-    #     print(weight[i].shape)
-    #     # print(dW[i].shape)
+    #     print(y[i].shape)
+    #     print(dW[i].shape)
     #     print(nB[i])
     # print(y)
-    print(len(nW))
+    print(weight)
+    # print(len(nW))
     localGradient = [[] for i in range(len(y))]
     # print(localGradient)
     for i in reversed(range(1,len(activation))):
-        if i == len(activation)-1:
-            for j in range(len(y[i-1])):
-                for k in range(len(y[i-1][j])):
-                    o = y[i-1][j][k]
+        for j in range(len(y[i-1])):
+            # print(y[i-2][j])
+            # print(nW)
+            for k in range(len(y[i-1][j])):
+                o = y[i-1][j][k]
+                inv = act.activate(o, activation[i], True)
+                if i == len(activation)-1:
                     error = d[j][k] - o
-                    inv = act.activate(o, activation[i], True)
                     localGradient[i-1].append(error*inv)
+                else:
+                    # print(y[i][j])
+                    sum = 0.0
+                    for l in range(len(y[i][j])):
+                        # print(weight[i][l][k])
+                        sum += localGradient[i][l]*weight[i][l][k]
+                    localGradient[i-1].append(sum*inv)
+                # print(i,j,k)
+                # print(nW[i-1][k])
+                # print(localGradient[i-1][k])
 
-                    # print(nW[i-1][k])
-                    # print(localGradient[i-1][k])
-                    for l, lv in enumerate(nW[i-1][k]):
-                        # print(y[i-2][j][l], 'prev o')
-                        changeW = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k]*y[i-2][j][l])
-                        nW[i-1][k][l] = weight[i-1][k][l] + changeW
+                for l, lv in enumerate(nW[i-1][k]):
+                    # print(y[i-1][j][k], 'prev o')
+                    # print(i,j,k,l)
+                    changeW = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k]*y[i-1][j][k])
+                    nW[i-1][k][l] = weight[i-1][k][l] + changeW
+                    dW[i-1][k][l] = changeW
 
-                    changeB = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k])
-                    nB[i-1][k] = bias[i-1][k] + changeB
-        else:
-            pass
+                changeB = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k])
+                nB[i-1][k] = bias[i-1][k] + changeB
+                dB[i-1][k] = changeB
 
 
         # print(i)
         pass
     # print(localGradient)
     # print(weight)
-    # print(nW)
-    print(nB)
-    return res
+    print(nW)
+    print(dW)
+    # print(nB)
+    return nW, nB, dW, dB
 
 if __name__ == '__main__':
     pass
