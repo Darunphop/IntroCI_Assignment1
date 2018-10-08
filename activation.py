@@ -3,14 +3,18 @@ import numpy as np
 def sigmoidO(x):
     return 1.0 / (1 + np.exp(0.0-x))
 
+def inverseSigmoid(x):
+    return sigmoidO(x) * (1.0 - sigmoidO(x))
+
 sigmoid = np.vectorize(sigmoidO)
 
-def activate(x, func):
+def activate(x, func, div=False):
     res = x
     if func == 's':
-        # print('in', res)
-        res = sigmoid(x)
-        # print('out', res)
+        if div:
+            res = inverseSigmoid(x)
+        else:
+            res = sigmoid(x)
 
     return res
 
