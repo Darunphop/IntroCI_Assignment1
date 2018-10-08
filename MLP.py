@@ -35,16 +35,16 @@ def feedForward(input, weigth, bias, activation):
 
 def backpropagate(y, weight, bias, activation, d, learnRate, momentum):
     res = []
-    err = [0.0 for i in range(len(y[-1][0]))]
-    print(y[-1],'y')
-    print(d,'d')
-    print(y[-1] - np.asarray(d))
+    # print(y[-1],'y')
+    # print(d,'d')
+    # print(y[-1] - np.asarray(d))
     err = np.sum(y[-1] - np.asarray(d), axis=0)
     print(err,'errr')
 
     print(activation)
-    for i in range(len(activation)):
+    for i in reversed(range(len(activation))):
         # layer =
+        print(i)
         pass
     return res
 
