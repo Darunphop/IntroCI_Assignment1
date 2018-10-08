@@ -33,18 +33,24 @@ def feedForward(input, weigth, bias, activation):
     
     return res
 
-def backpropagate(y, weight, bias, activation, d, learnRate, momentum):
+def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
     res = []
-    # print(y[-1],'y')
-    # print(d,'d')
-    # print(y[-1] - np.asarray(d))
-    err = np.sum(y[-1] - np.asarray(d), axis=0)
-    print(err,'errr')
+    nW = [np.zeros(weight[i].shape) for i in range(len(weight))]
+    nB = [np.zeros(bias[i].shape) for i in range(len(bias))]
+    if len(dW) == 0:
+        dW = [np.zeros(weight[i].shape) for i in range(len(weight))]
+    if len(dB) == 0:
+        dB = [np.zeros(bias[i].shape) for i in range(len(bias))]
 
-    # print(activation)
-    print(y)
+    
+    # for i in range(len(weight)):
+    #     print(weight[i].shape)
+    #     # print(dW[i].shape)
+    #     print(nB[i])
+    # print(y)
+    print(len(nW))
     localGradient = [[] for i in range(len(y))]
-    print(localGradient)
+    # print(localGradient)
     for i in reversed(range(1,len(activation))):
         if i == len(activation)-1:
             for j in range(len(y[i-1])):
@@ -53,9 +59,26 @@ def backpropagate(y, weight, bias, activation, d, learnRate, momentum):
                     error = d[j][k] - o
                     inv = act.activate(o, activation[i], True)
                     localGradient[i-1].append(error*inv)
+
+                    # print(nW[i-1][k])
+                    # print(localGradient[i-1][k])
+                    for l, lv in enumerate(nW[i-1][k]):
+                        # print(y[i-2][j][l], 'prev o')
+                        changeW = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k]*y[i-2][j][l])
+                        nW[i-1][k][l] = weight[i-1][k][l] + changeW
+
+                    changeB = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k])
+                    nB[i-1][k] = bias[i-1][k] + changeB
+        else:
+            pass
+
+
         # print(i)
         pass
-    print(localGradient)
+    # print(localGradient)
+    # print(weight)
+    # print(nW)
+    print(nB)
     return res
 
 if __name__ == '__main__':
