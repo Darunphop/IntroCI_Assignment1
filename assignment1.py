@@ -2,6 +2,11 @@ import preprocess as pp
 import MLP as mlp
 import numpy as np
 
+def training(dataChunk, epoch):
+    res = []
+
+    return res
+    
 if __name__ == '__main__':
     data = pp.input('Flood_dataset.txt')
     trainSet, testSet = pp.kFolds(data,10)
