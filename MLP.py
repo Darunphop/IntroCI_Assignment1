@@ -19,9 +19,6 @@ def feedForward(input, weigth, bias, activation):
     res = []
     tmp = []
 
-    print(activation)
-    # print(bias)
-    # print(weigth)
     for i in range(len(activation)-1):
         tmp = np.dot(len(tmp)==0 and input or tmp, np.transpose(weigth[i]))
         for j in range(tmp.shape[0]):
@@ -43,19 +40,9 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
         dB = [np.zeros(bias[i].shape) for i in range(len(bias))]
 
     
-    # for i in range(len(weight)):
-    #     print(y[i].shape)
-    #     print(dW[i].shape)
-    #     print(nB[i])
-    # print(y)
-    # print(weight)
-    # print(len(nW))
     localGradient = [[] for i in range(len(y))]
-    # print(localGradient)
     for i in reversed(range(1,len(activation))):
         for j in range(len(y[i-1])):
-            # print(y[i-2][j])
-            # print(nW)
             for k in range(len(y[i-1][j])):
                 o = y[i-1][j][k]
                 inv = act.activate(o, activation[i], True)
@@ -63,19 +50,12 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
                     error = d[j][k] - o
                     localGradient[i-1].append(error*inv)
                 else:
-                    # print(y[i][j])
                     sum = 0.0
                     for l in range(len(y[i][j])):
-                        # print(weight[i][l][k])
                         sum += localGradient[i][l]*weight[i][l][k]
                     localGradient[i-1].append(sum*inv)
-                # print(i,j,k)
-                # print(nW[i-1][k])
-                # print(localGradient[i-1][k])
 
                 for l, lv in enumerate(nW[i-1][k]):
-                    # print(y[i-1][j][k], 'prev o')
-                    # print(i,j,k,l)
                     changeW = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k]*y[i-1][j][k])
                     nW[i-1][k][l] = weight[i-1][k][l] + changeW
                     dW[i-1][k][l] = changeW
@@ -84,14 +64,6 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
                 nB[i-1][k] = bias[i-1][k] + changeB
                 dB[i-1][k] = changeB
 
-
-        # print(i)
-        pass
-    # print(localGradient)
-    # print(weight)
-    # print(nW)
-    # print(dW)
-    # print(nB)
     return nW, nB, dW, dB
 
 def mse(y, d):
