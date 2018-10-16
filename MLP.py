@@ -48,7 +48,7 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
     #     print(dW[i].shape)
     #     print(nB[i])
     # print(y)
-    print(weight)
+    # print(weight)
     # print(len(nW))
     localGradient = [[] for i in range(len(y))]
     # print(localGradient)
@@ -89,10 +89,21 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
         pass
     # print(localGradient)
     # print(weight)
-    print(nW)
-    print(dW)
+    # print(nW)
+    # print(dW)
     # print(nB)
     return nW, nB, dW, dB
+
+def mse(y, d):
+    res = 0.0
+    dCp = np.asarray(d)
+    yCp = y[-1:][0]
+    for i in range(len(yCp)):
+        sum = 0.0
+        for j in range(len(yCp[i])):
+            sum += (yCp[i][j] - dCp[i][j])**2
+        res += sum / len(yCp)
+    return res / len(yCp)
 
 if __name__ == '__main__':
     pass
