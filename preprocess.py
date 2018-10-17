@@ -6,9 +6,13 @@ def input(input):
         res = [list(map(int, line.rstrip().split('\t'))) for line in inputFile]
     return res
 
-def normalize(x):
+def normalize(x, denorm=False):
     #max 628 min 95 || 0 - 700
-    return (x - 0) / (700 - 0)
+    MAX = 700
+    MIN = 0
+    if denorm:
+        return (x * (MAX - MIN) + MIN)
+    return (x - MIN) / (MAX - MIN)
 
 def kFolds(data, k=1):
     trainSet = [[] for i in range(k)]
