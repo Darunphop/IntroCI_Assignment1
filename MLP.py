@@ -8,7 +8,8 @@ def modelInit(model):
 
     weight = []
     for i in range(nHidden):
-        weight.append(np.random.rand(layerSize[i+1], layerSize[i]))
+        weight.append(np.random.rand(layerSize[i+1], layerSize[i]) / (5**-2))
+        # weight.append(np.ones((layerSize[i+1], layerSize[i])) / 5**-2)
     bias = []
     for i in range(nHidden):
         bias.append(np.random.rand(layerSize[i+1]))

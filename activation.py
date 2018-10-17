@@ -15,6 +15,11 @@ def activate(x, func, div=False):
             res = inverseSigmoid(x)
         else:
             res = sigmoid(x)
+    if func == 't':
+        if div:
+            res = 1.0 - np.tanh(x)**2
+        else:
+            res = np.tanh(x)
 
     return res
 
