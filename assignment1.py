@@ -19,14 +19,14 @@ def training(trainingSet, epoch, w, b, a, leanRate, momentum, resAttr=1):
             d = pp.normalRange(d).tolist()
 
             # print(inpu)
-            # print(d)
+            
             o = mlp.feedForward([inpu], w, b, a)
             nW,nB,dW,dB = mlp.backpropagate(o,w,dW,dB,b,a,[d],leanRate,momentum)
             dWG += np.asarray(dW)
             dBG += np.asarray(dB)
         w = dWG/len(trainingSet)
         b = dBG/len(trainingSet)
-
+        # print(w)
         trainData = trainingSet
         inpu = np.delete(trainData, -1, 1)
         inpu = pp.normalRange(inpu).tolist()
@@ -64,32 +64,35 @@ def testing(w, b, a, data, resAttr=1):
 if __name__ == '__main__':
     data = pp.input('Flood_dataset.txt')
     trainSet, testSet = pp.kFolds(data,10)
-    w,b,a = mlp.modelInit('8x-8t-1s')
-    chunk = trainSet[0][:2]
+    w,b,a = mlp.modelInit('8x-6s-3s-1s')
+    chunk = trainSet[0][:3]
+    print('chunk', chunk)
     inpu = np.delete(chunk, -1, 1)
     inpu = pp.normalRange(inpu).tolist()
-    d = np.delete(chunk, range(len(chunk[0])-2), 1)
-    d = pp.normalRange(d).tolist()
+    # print('inpu',inpu)
+    d = np.delete(chunk, range(len(chunk[0])-1), 1)
+    d = pp.normalRange(d)
 
     # print('legit', inpu)
     # print('legit', d)
-    
-    # o = mlp.feedForward(inpu, w, b, a)
-    # print(o)
+    # print('inpu',inpu)
+    # print('w',w)
+    o = mlp.feedForward(inpu, w, b, a)
+    print(o)
     # print('b',mlp.mse(o,d))
     # for i in o:
     #     print(i)
-    # print(w)
-    # w,b,dW,dB = mlp.backpropagate(o,w,[],[],b,a,d,0.1,0)
-    # print(w)
+    # print('w',  w)
+    w,b,dW,dB = mlp.backpropagate(o,w,[],[],b,a,d,0.01,0)
+    # print(dW)
     # print(dB)
     # o = mlp.feedForward(inpu, w, b, a)
     # print('a',mlp.mse(o,d))
 
-    nw,nb = training(trainSet[0],100,copy.deepcopy(w),copy.deepcopy(b),a,0.01,0.001,1)
+    # nw,nb = training(trainSet[0],100,copy.deepcopy(w),copy.deepcopy(b),a,0.001,0.001,1)
 
     # print(len(testSet[0]))
-    print(testing(nw,nb,a,testSet[0]))
+    # print(testing(nw,nb,a,testSet[0]))
     # print(np.average(trainSet[0],axis=0))
     # print(w)
     # print(b)

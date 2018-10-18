@@ -8,7 +8,7 @@ def modelInit(model):
 
     weight = []
     for i in range(nHidden):
-        weight.append(np.random.rand(layerSize[i+1], layerSize[i]) / (5**-2))
+        weight.append(np.random.randn(layerSize[i+1], layerSize[i]) )
         # weight.append(np.ones((layerSize[i+1], layerSize[i])) / 5**-2)
     bias = []
     for i in range(nHidden):
@@ -25,10 +25,9 @@ def feedForward(input, weigth, bias, activation):
         for j in range(tmp.shape[0]):
             for k in range(tmp.shape[1]):
                 tmp[j][k] += bias[i][k]
-        for j in range(tmp.shape[0]):
-            tmp[j] = act.activate(np.copy(tmp[j]), activation[i+1])
-        res.append(tmp)
-    
+        # for j in range(tmp.shape[0]):
+        tmp = act.activate(np.copy(tmp), activation[i+1])
+        res.append(np.asarray(tmp))
     return res
 
 def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
@@ -40,30 +39,36 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
     if len(dB) == 0:
         dB = [np.zeros(bias[i].shape) for i in range(len(bias))]
 
-    
+
     localGradient = [[] for i in range(len(y))]
-    for i in reversed(range(1,len(activation))):
-        for j in range(len(y[i-1])):
-            for k in range(len(y[i-1][j])):
-                o = y[i-1][j][k]
-                inv = act.activate(o, activation[i], True)
-                if i == len(activation)-1:
-                    error = d[j][k] - o
-                    localGradient[i-1].append(error*inv)
-                else:
-                    sum = 0.0
-                    for l in range(len(y[i][j])):
-                        sum += localGradient[i][l]*weight[i][l][k]
-                    localGradient[i-1].append(sum*inv)
 
-                for l, lv in enumerate(nW[i-1][k]):
-                    changeW = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k]*y[i-1][j][k])
-                    nW[i-1][k][l] = weight[i-1][k][l] + changeW
-                    dW[i-1][k][l] = changeW
+    print(dW)
+    # print('y',y[-1])
+    # print('d',d)
+    # error = d - y[-1]
+    # print('error', error)
+    # print(act.activate(y[-1], activation[-1], True))
+    # localGradient[-1] = (act.activate(y[-1], activation[-1], True) * error).T
+    # print('locG',localGradient)
 
-                changeB = (momentum*dW[i-1][k][l]) + (learnRate*localGradient[i-1][k])
-                nB[i-1][k] = bias[i-1][k] + changeB
-                dB[i-1][k] = changeB
+    for i in reversed(range(len(y))):
+        print(i)
+        if i+1 == len(y):
+            error = d - y[i]
+            localGradient[i] = (act.activate(y[i], activation[i], True) * error).T
+        else:
+            localGradient[i] = (act.activate(y[i], activation[-1], True) * (np.dot(localGradient[i+1].T, weight[i+1]))).T
+        # print(localGradient)
+        dW[i] = learnRate * np.dot(localGradient[i], y[i-1])
+        dB[i] = learnRate * localGradient[i]
+        # print(dW)
+    print('dB',dB)
+    print('locG',localGradient)
+
+    # print('loG c',localGradient[1:][1].shape)
+    # print('y[1:', y[:-1][1].shape)
+    # dw = learnRate * ( np.dot(localGradient[1:], y[:-1]) )
+        
 
     return nW, nB, dW, dB
 
