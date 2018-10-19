@@ -11,19 +11,21 @@ def training(trainingSet, epoch, w, b, a, leanRate, momentum, resAttr=1):
             dW = []
             dB = []
 
-        for j in range(len(trainingSet)):
-            trainData = trainingSet[j]
-            inpu = trainData[:-resAttr]
-            inpu = pp.normalRange(inpu).tolist()
-            d = np.delete(trainData, range(len(trainData)-resAttr), 0)
-            d = pp.normalRange(d).tolist()
+        # for j in range(len(trainingSet)):
+        trainData = trainingSet
+        # print(trainData)
+        inpu = np.delete(trainData, -resAttr, 1)
+        inpu = pp.normalRange(inpu).tolist()
+        # print(inpu)
+        d = np.delete(trainData, range(len(trainData[0])-resAttr), 1)
+        d = pp.normalRange(d)
 
-            # print(inpu)
-            
-            o = mlp.feedForward([inpu], w, b, a)
-            nW,nB,dW,dB = mlp.backpropagate(o,w,dW,dB,b,a,[d],leanRate,momentum)
-            dWG += np.asarray(dW)
-            dBG += np.asarray(dB)
+        # print(inpu)
+        
+        o = mlp.feedForward(inpu, w, b, a)
+        dW,dB = mlp.backpropagate(o,w,dW,dB,b,a,d,leanRate,momentum)
+        dWG += np.asarray(dW)
+        dBG += np.asarray(dB)
         w = dWG/len(trainingSet)
         b = dBG/len(trainingSet)
         # print(w)
@@ -31,7 +33,7 @@ def training(trainingSet, epoch, w, b, a, leanRate, momentum, resAttr=1):
         inpu = np.delete(trainData, -1, 1)
         inpu = pp.normalRange(inpu).tolist()
         d = np.delete(trainData, range(len(trainData[0])-resAttr), 1)
-        d = pp.normalRange(d).tolist()
+        d = pp.normalRange(d)
         o = mlp.feedForward(inpu, w, b, a)
         print(i)
         if i % 1 == 0:
@@ -64,32 +66,46 @@ def testing(w, b, a, data, resAttr=1):
 if __name__ == '__main__':
     data = pp.input('Flood_dataset.txt')
     trainSet, testSet = pp.kFolds(data,10)
-    w,b,a = mlp.modelInit('8x-6s-3s-1s')
-    chunk = trainSet[0][:3]
-    print('chunk', chunk)
+    w,b,a = mlp.modelInit('8x-6s-1s')
+    chunk = trainSet[0][:40]
+    # print('chunk', chunk)
     inpu = np.delete(chunk, -1, 1)
     inpu = pp.normalRange(inpu).tolist()
     # print('inpu',inpu)
     d = np.delete(chunk, range(len(chunk[0])-1), 1)
     d = pp.normalRange(d)
 
-    # print('legit', inpu)
-    # print('legit', d)
-    # print('inpu',inpu)
-    # print('w',w)
-    o = mlp.feedForward(inpu, w, b, a)
-    print(o)
-    # print('b',mlp.mse(o,d))
-    # for i in o:
-    #     print(i)
-    # print('w',  w)
-    w,b,dW,dB = mlp.backpropagate(o,w,[],[],b,a,d,0.01,0)
-    # print(dW)
-    # print(dB)
-    # o = mlp.feedForward(inpu, w, b, a)
-    # print('a',mlp.mse(o,d))
+    for i in range(50000):
+        if i == 0:
+            dW = []
+            dB = []
+        # print(i)
+        # print('legit', inpu)
+        # print('legit', d)
+        # print('inpu',inpu)
+        # print('w',w)
+        o = mlp.feedForward(inpu, w, b, a)
+        # print(o)
+        # print('b',mlp.mse(o,d))
+        # for i in o:
+        #     print(i)
+        # print('w',  w)
+        w,b,dW,dB = mlp.backpropagate(inpu,o,w,dW,dB,b,a,d,0.001,0)
+        # print('dW',dW)
+        # print('w',w.__class__)
+        # w += dW
+        # print('w',w.__class__)
+        # b += dB
+        # print(dW)
+        # print(w)
+        # print(dB)
+        o = mlp.feedForward(inpu, w, b, a)
+        print('a',mlp.mse(o,d))
+    print(np.round(pp.normalize(o[-1], denorm=True)))
+    print(np.round(pp.normalize(d, denorm=True)))
+    
 
-    # nw,nb = training(trainSet[0],100,copy.deepcopy(w),copy.deepcopy(b),a,0.001,0.001,1)
+    # nw,nb = training(trainSet[0],1,copy.deepcopy(w),copy.deepcopy(b),a,0.001,0.001,1)
 
     # print(len(testSet[0]))
     # print(testing(nw,nb,a,testSet[0]))

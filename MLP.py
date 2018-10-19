@@ -30,10 +30,12 @@ def feedForward(input, weigth, bias, activation):
         res.append(np.asarray(tmp))
     return res
 
-def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
-    res = []
-    nW = [np.zeros(weight[i].shape) for i in range(len(weight))]
-    nB = [np.zeros(bias[i].shape) for i in range(len(bias))]
+def backpropagate(input,y, weight, dW, dB, bias, activation, d, learnRate, momentum):
+    # res = []
+    # nW = [np.zeros(weight[i].shape) for i in range(len(weight))]
+    nW = weight.copy()
+    # nB = [np.zeros(bias[i].shape) for i in range(len(bias))]
+    nB = bias.copy()
     if len(dW) == 0:
         dW = [np.zeros(weight[i].shape) for i in range(len(weight))]
     if len(dB) == 0:
@@ -41,8 +43,8 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
 
 
     localGradient = [[] for i in range(len(y))]
-
-    print(dW)
+    # print(nW)
+    # print(dW)
     # print('y',y[-1])
     # print('d',d)
     # error = d - y[-1]
@@ -52,29 +54,36 @@ def backpropagate(y, weight, dW, dB, bias, activation, d, learnRate, momentum):
     # print('locG',localGradient)
 
     for i in reversed(range(len(y))):
-        print(i)
+        # print(i)
         if i+1 == len(y):
             error = d - y[i]
             localGradient[i] = (act.activate(y[i], activation[i], True) * error).T
         else:
             localGradient[i] = (act.activate(y[i], activation[-1], True) * (np.dot(localGradient[i+1].T, weight[i+1]))).T
         # print(localGradient)
-        dW[i] = learnRate * np.dot(localGradient[i], y[i-1])
-        dB[i] = learnRate * localGradient[i]
-        # print(dW)
-    print('dB',dB)
-    print('locG',localGradient)
+        # if i == 0:
+        #     dW[i] = learnRate * np.dot(localGradient[i], input)
+        # else:
+        #     dW[i] = learnRate * np.dot(localGradient[i], y[i-1])
+        dW[i] = learnRate * np.dot(localGradient[i], i==0 and input or y[i-1])
+        dB[i] = np.average(learnRate * localGradient[i], axis=1)
+        nW[i] += dW[i]
+        nB[i] += dB[i]
+        # print('dW',dW)
+        # print('dB',dB)
+    # print('locG',localGradient)
 
     # print('loG c',localGradient[1:][1].shape)
     # print('y[1:', y[:-1][1].shape)
     # dw = learnRate * ( np.dot(localGradient[1:], y[:-1]) )
-        
 
     return nW, nB, dW, dB
 
 def mse(y, d):
     res = 0.0
+    # print('d',d)
     dCp = np.asarray(d)
+    # print('dCp',dCp)
     yCp = y[-1:][0]
     for i in range(len(yCp)):
         sum = 0.0
