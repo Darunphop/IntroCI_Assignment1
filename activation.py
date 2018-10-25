@@ -20,7 +20,11 @@ def activate(x, func, div=False):
             res = 1.0 - np.tanh(x)**2
         else:
             res = np.tanh(x)
-
+    if func == 'l':
+        if div:
+            res = 1. * (x > 0)
+        else:
+            res = np.maximum(x, 0)
     return res
 
 if __name__ == '__main__':
