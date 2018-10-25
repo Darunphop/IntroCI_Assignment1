@@ -8,7 +8,7 @@ def modelInit(model):
 
     weight = []
     for i in range(nHidden):
-        weight.append(np.random.randn(layerSize[i+1], layerSize[i]) )
+        weight.append(np.random.randn(layerSize[i+1], layerSize[i]))
         # weight.append(np.ones((layerSize[i+1], layerSize[i])) / 5**-2)
     bias = []
     for i in range(nHidden):
@@ -25,21 +25,22 @@ def feedForward(input, weigth, bias, activation):
         for j in range(tmp.shape[0]):
             for k in range(tmp.shape[1]):
                 tmp[j][k] += bias[i][k]
-        # for j in range(tmp.shape[0]):
         tmp = act.activate(np.copy(tmp), activation[i+1])
         res.append(np.asarray(tmp))
     return res
 
-def backpropagate(input,y, weight, dW, dB, bias, activation, d, learnRate, momentum):
+def backpropagate(input,y, weight, dWo, dBo, bias, activation, d, learnRate, momentum):
     # res = []
     # nW = [np.zeros(weight[i].shape) for i in range(len(weight))]
     nW = weight.copy()
     # nB = [np.zeros(bias[i].shape) for i in range(len(bias))]
     nB = bias.copy()
-    if len(dW) == 0:
-        dW = [np.zeros(weight[i].shape) for i in range(len(weight))]
-    if len(dB) == 0:
-        dB = [np.zeros(bias[i].shape) for i in range(len(bias))]
+    if len(dWo) == 0:
+        dWo = [np.zeros(weight[i].shape) for i in range(len(weight))]
+    if len(dBo) == 0:
+        dBo = [np.zeros(bias[i].shape) for i in range(len(bias))]
+    dW = [np.zeros(weight[i].shape) for i in range(len(weight))]
+    dB = [np.zeros(bias[i].shape) for i in range(len(bias))]
 
 
     localGradient = [[] for i in range(len(y))]
@@ -65,8 +66,8 @@ def backpropagate(input,y, weight, dW, dB, bias, activation, d, learnRate, momen
         #     dW[i] = learnRate * np.dot(localGradient[i], input)
         # else:
         #     dW[i] = learnRate * np.dot(localGradient[i], y[i-1])
-        dW[i] = learnRate * np.dot(localGradient[i], i==0 and input or y[i-1])
-        dB[i] = np.average(learnRate * localGradient[i], axis=1)
+        dW[i] = (momentum*dWo[i]) + (learnRate * np.dot(localGradient[i], i==0 and input or y[i-1]) / len(input))
+        dB[i] = (momentum*dBo[i]) + np.average(learnRate * localGradient[i], axis=1)
         nW[i] += dW[i]
         nB[i] += dB[i]
         # print('dW',dW)
@@ -84,13 +85,16 @@ def mse(y, d):
     # print('d',d)
     dCp = np.asarray(d)
     # print('dCp',dCp)
-    yCp = y[-1:][0]
-    for i in range(len(yCp)):
-        sum = 0.0
-        for j in range(len(yCp[i])):
-            sum += (yCp[i][j] - dCp[i][j])**2
-        res += sum / len(yCp)
-    return res / len(yCp)
+
+    yCp = y
+    # print('yCp',yCp)
+    # print('y', y)
+    # for i in range(len(yCp)):
+    #     sum = 0.0
+    #     for j in range(len(yCp[i])):
+    #         sum += (yCp[i][j] - dCp[i][j])**2
+    #     res += sum / len(yCp)
+    return np.average(np.abs(dCp - yCp))
 
 if __name__ == '__main__':
     pass
