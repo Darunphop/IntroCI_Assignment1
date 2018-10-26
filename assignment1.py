@@ -7,11 +7,13 @@ import matplotlib.pyplot as plt
 
 def training(trainingSet, testSet, epoch, w, b, a, learnRate, momentum, resAttr=1):
     res = []
-    inpu = np.delete(trainingSet, -resAttr, 1)
+    inpu = np.delete(trainingSet, range(len(trainingSet[0]))[-resAttr:], 1)
     inpu = pp.normalRange(inpu).tolist()
     d = np.delete(trainingSet, range(len(trainingSet[0])-resAttr), 1)
     d = pp.normalRange(d)
 
+    print(len(inpu))
+    
     for i in range(epoch):
             if i == 0:
                 dW = []
@@ -19,13 +21,13 @@ def training(trainingSet, testSet, epoch, w, b, a, learnRate, momentum, resAttr=
             o = mlp.feedForward(inpu, w, b, a)
             if (i+1) % 100 == 0 or i == 0:
                 # print(i+1, testing(w,b,a,testSet))
-                res.append((i+1, testing(w,b,a,testSet)))
+                res.append((i+1, testing(w,b,a,testSet,resAttr)))
             w,b,dW,dB = mlp.backpropagate(inpu,o,w,dW,dB,b,a,d,learnRate,momentum)
 
     return np.asarray(res)
 
 def testing(w, b, a, data, resAttr=1):
-    inpu = np.delete(data, -resAttr, 1)
+    inpu = np.delete(data, range(len(data[0]))[-resAttr:], 1)
     inpu = pp.normalRange(inpu).tolist()
     d = np.delete(data, range(len(data[0])-resAttr), 1)
 
@@ -71,11 +73,18 @@ if __name__ == '__main__':
     
     elif sys.argv[1] == 'exp2':
         inputFile = 'cross.pat'
-        model = '8x-5s-2s'
+        model = '2x-5s-2l'
         epoch = 1
+        k = 10
 
         data = pp.input(inputFile,clean=True)
-        print(len(data))
+        trainSet, testSet = pp.kFolds(data,k)
+        res = []
+
+        for i in range(k):
+            w,b,a = mlp.modelInit(model)
+            d1=training(trainSet[i],testSet[i],epoch,copy.deepcopy(w),copy.deepcopy(b),a,0.001,0.9,resAttr=2)
+
     else:
         data = pp.input('Flood_dataset.txt')
         trainSet, testSet = pp.kFolds(data,10)
