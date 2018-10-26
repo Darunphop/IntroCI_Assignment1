@@ -5,12 +5,14 @@ import sys
 import copy
 import matplotlib.pyplot as plt
 
-def training(trainingSet, testSet, epoch, w, b, a, learnRate, momentum, resAttr=1):
+def training(trainingSet, testSet, epoch, w, b, a, learnRate, momentum, resAttr=1, confusion=False):
     res = []
     inpu = np.delete(trainingSet, range(len(trainingSet[0]))[-resAttr:], 1)
-    inpu = pp.normalRange(inpu).tolist()
     d = np.delete(trainingSet, range(len(trainingSet[0])-resAttr), 1)
-    d = pp.normalRange(d)
+
+    if confusion:
+        inpu = pp.normalRange(inpu).tolist()
+        d = pp.normalRange(d)
 
     # print(len(inpu))
     
@@ -20,24 +22,22 @@ def training(trainingSet, testSet, epoch, w, b, a, learnRate, momentum, resAttr=
                 dB = []
             o = mlp.feedForward(inpu, w, b, a)
             if (i+1) % 100 == 0 or i == 0:
-                # print(i+1, testing(w,b,a,testSet,resAttr))
-                res.append((i+1, testing(w,b,a,testSet,resAttr)))
+                print(i+1,'\n', testing(w,b,a,testSet,resAttr,confusion))
+                res.append((i+1, testing(w,b,a,testSet,resAttr,confusion)))
             w,b,dW,dB = mlp.backpropagate(inpu,o,w,dW,dB,b,a,d,learnRate,momentum)
 
     return np.asarray(res)
 
-def testing(w, b, a, data, resAttr=1):
+def testing(w, b, a, data, resAttr=1, confusion=False):
     inpu = np.delete(data, range(len(data[0]))[-resAttr:], 1)
-    inpu = pp.normalRange(inpu).tolist()
     d = np.delete(data, range(len(data[0])-resAttr), 1)
+    o = mlp.feedForward(confusion and pp.normalRange(inpu).tolist() or inpu.tolist(), w, b, a)[-1]
 
-
-    o = mlp.feedForward(inpu, w, b, a)[-1]
-    o = np.round(pp.normalize(o, denorm=True))
-
-    # print(o, inpu)
-
-    return mlp.mse(o,d)
+    if confusion:
+        return mlp.confusion(o,d)
+    else:
+        o = np.round(pp.normalize(o, denorm=True))
+        return mlp.mse(o,d)
     
 if __name__ == '__main__':
     if sys.argv[1] == 'exp1':
@@ -75,8 +75,8 @@ if __name__ == '__main__':
     
     elif sys.argv[1] == 'exp2':
         inputFile = 'cross.pat'
-        model = '2x-2s-2l'
-        epoch = 1000
+        model = '2x-4s-2x'
+        epoch = 50000
         k = 10
 
         data = pp.input(inputFile,clean=True)
@@ -85,8 +85,8 @@ if __name__ == '__main__':
 
         for i in range(1):
             w,b,a = mlp.modelInit(model)
-            d1=training(trainSet[i],testSet[i],epoch,copy.deepcopy(w),copy.deepcopy(b),a,0.001,0.9,resAttr=2)
-            # print(d1)
+            d1=training(trainSet[i],testSet[i],epoch,copy.deepcopy(w),copy.deepcopy(b),a,0.01,0.5,resAttr=2,confusion=True)
+
 
     else:
         data = pp.input('Flood_dataset.txt')

@@ -89,7 +89,7 @@ def mse(y, d):
 
     yCp = y
     print('yCp',yCp)
-    print(dCp - yCp)
+    # print(np.average(np.abs(dCp - yCp), axis=0))
     # print('y', y)
     # for i in range(len(yCp)):
     #     sum = 0.0
@@ -97,6 +97,18 @@ def mse(y, d):
     #         sum += (yCp[i][j] - dCp[i][j])**2
     #     res += sum / len(yCp)
     return np.average(np.abs(dCp - yCp))
+
+def confusion(y, d):
+    res = np.zeros((2,2),dtype=int)
+    for i in range(len(d)):
+        a = y[i][0] > y[i][1] and 1 or 0
+        b = d[i][0] > d[i][1] and 1 or 0
+        # print(y[i],d[i])
+        # print(a,b)
+        res[a][b] += 1
+        
+
+    return res
 
 if __name__ == '__main__':
     pass

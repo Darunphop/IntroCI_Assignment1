@@ -14,7 +14,7 @@ def input(input, clean=False):
 
 def normalize(x, denorm=False):
     #max 628 min 95 || 0 - 700
-    MAX = 800.0
+    MAX = 1.0
     MIN = 0.0
     if denorm:
         return (x * (MAX - MIN) + MIN)
