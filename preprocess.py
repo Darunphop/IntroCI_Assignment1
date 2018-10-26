@@ -1,9 +1,15 @@
 import numpy as np
 
-def input(input):
+def input(input, clean=False):
     res = []
     with open(input, 'r') as inputFile:
-        res = [list(map(int, line.rstrip().split('\t'))) for line in inputFile]
+        if clean:
+            lines = inputFile.readlines()
+            for i,_ in enumerate(lines):
+                if (i+1) % 3 == 0:
+                    res.append(list(map(float, str(lines[i-1].rstrip() +'\t'+ lines[i].rstrip()).split())))
+        else:
+            res = [list(map(int, line.rstrip().split('\t'))) for line in inputFile]
     return res
 
 def normalize(x, denorm=False):

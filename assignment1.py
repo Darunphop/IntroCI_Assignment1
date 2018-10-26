@@ -70,7 +70,12 @@ if __name__ == '__main__':
             outFile.write('\n' + str(np.average(np.asarray(res), axis=0)))
     
     elif sys.argv[1] == 'exp2':
-        pass
+        inputFile = 'cross.pat'
+        model = '8x-5s-2s'
+        epoch = 1
+
+        data = pp.input(inputFile,clean=True)
+        print(len(data))
     else:
         data = pp.input('Flood_dataset.txt')
         trainSet, testSet = pp.kFolds(data,10)
