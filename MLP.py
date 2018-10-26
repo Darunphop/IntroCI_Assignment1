@@ -19,6 +19,7 @@ def modelInit(model):
 def feedForward(input, weigth, bias, activation):
     res = []
     tmp = []
+    
 
     for i in range(len(activation)-1):
         tmp = np.dot(len(tmp)==0 and input or tmp, np.transpose(weigth[i]))
@@ -84,10 +85,11 @@ def mse(y, d):
     res = 0.0
     # print('d',d)
     dCp = np.asarray(d)
-    # print('dCp',dCp)
+    print('dCp',dCp)
 
     yCp = y
-    # print('yCp',yCp)
+    print('yCp',yCp)
+    print(dCp - yCp)
     # print('y', y)
     # for i in range(len(yCp)):
     #     sum = 0.0
