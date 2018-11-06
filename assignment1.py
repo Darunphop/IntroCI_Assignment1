@@ -26,7 +26,10 @@ def training(trainingSet, testSet, epoch, w, b, a, learnRate, momentum, resAttr=
                 res.append((i+1, testing(w,b,a,testSet,resAttr,confusion)))
             w,b,dW,dB = mlp.backpropagate(inpu,o,w,dW,dB,b,a,d,learnRate,momentum)
 
-    return np.asarray(res)
+    try:
+        return np.asarray(res)
+    except:
+        return res
 
 def testing(w, b, a, data, resAttr=1, confusion=False):
     inpu = np.delete(data, range(len(data[0]))[-resAttr:], 1)
@@ -76,7 +79,7 @@ if __name__ == '__main__':
     elif sys.argv[1] == 'exp2':
         inputFile = 'cross.pat'
         model = '2x-4s-2x'
-        epoch = 50000
+        epoch = 500
         k = 10
 
         data = pp.input(inputFile,clean=True)
@@ -86,7 +89,7 @@ if __name__ == '__main__':
         for i in range(1):
             w,b,a = mlp.modelInit(model)
             d1=training(trainSet[i],testSet[i],epoch,copy.deepcopy(w),copy.deepcopy(b),a,0.01,0.5,resAttr=2,confusion=True)
-
+            print(d1[-1])
 
     else:
         data = pp.input('Flood_dataset.txt')
